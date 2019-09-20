@@ -24,14 +24,15 @@ spring:
             jdbc:
               time_zone: UTC
             format_sql: true
+        
   cloud:
     config:
-      uri: http://10.191.90.127:8888
+      uri: http://config:8888
       fail-fast: true
       username: user
       password: 1234
   datasource:
-    url: jdbc:mysql://10.191.90.127:3306/urlshortner
+    url: jdbc:mysql://mysqldb:3306/urlshortner
     username: root
     password: root123
     

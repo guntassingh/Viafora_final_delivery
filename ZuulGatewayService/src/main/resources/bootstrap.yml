@@ -3,7 +3,7 @@ spring:
     name: gateway-service
   cloud:
     config:
-      uri: http://10.191.90.127:8888
+      uri: http://${env_var_name}:8888
       fail-fast: true
      
       
