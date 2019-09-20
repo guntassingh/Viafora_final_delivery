@@ -1,0 +1,81 @@
+version: '2.1'
+services:
+  configserverapp:
+    image: configserverapp
+    environment:
+      - env_var_name=10.191.90.127
+    build:
+      context: ./ConfigServerApplication
+      dockerfile: Dockerfile
+    ports:
+      - 8888:8888
+    networks:
+      - springapp
+    volumes:
+      - /data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://10.191.90.127:8888/actuator/health"]
+      interval: 30s
+      timeout: 20s
+      retries: 5
+  eurekaserver:
+    image: eurekaserver
+    environment:
+      - env_var_name=10.191.90.127
+    build:
+      context: ./EurekaServer
+      dockerfile: Dockerfile
+    ports:
+      - 8761:8761
+    networks:
+      - springapp
+    volumes:
+      - /data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://10.191.90.127:8761/actuator/health"]
+      interval: 30s
+      timeout: 20s
+      retries: 5
+    depends_on:
+      configserverapp:
+        condition: service_healthy
+  zuulgatewayservice:
+    image: zuulgatewayservice 
+    environment:
+      - env_var_name=10.191.90.127
+    build:
+      context: ./ZuulGatewayService
+      dockerfile: Dockerfile
+    ports:
+      - 8443:8443
+    networks:
+      - springapp
+    volumes:
+      - /data:/data
+    healthcheck:
+      test: ["CMD", "curl", "--insecure", "-f", "https://10.191.90.127:8443/actuator/health"]
+      interval: 30s
+      timeout: 20s
+      retries: 5
+    depends_on:
+      eurekaserver:
+        condition: service_healthy
+  url:
+    image: url
+    build:
+      context: ./URLShortener
+      dockerfile: Dockerfile
+    networks:
+      - springapp
+    ports:
+      - 9091:9091
+    links:
+      - eurekaserver
+    volumes:
+      - /data:/data
+    depends_on:
+      zuulgatewayservice:
+        condition: service_healthy
+networks:
+  springapp:
+    
