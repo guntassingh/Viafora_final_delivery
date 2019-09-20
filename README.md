@@ -1,5 +1,3 @@
-# Viafora_final_delivery
-
 # Url Shortener
 
 Link shortening service that can be used to turn fully qualified URLs into short code to be usedin links.
@@ -18,29 +16,48 @@ Package manager
 
 ## Step
 
-1- Create docker network "SpringApp".
-2- Run docker mysql image.
-3- Machine IP instead of localhost in share and resource folder ConfigServerApplication application.
-application.yml file
-gateway-service.yml  file
-4-Machine IP instead of localhost in  resource folder ConfigServerApplication application.
-  application.properties
-5- Machine IP instead of localhost in  resource folder ZuulGatewayService application.
-  bootstrap.yml
-6- Machine IP instead of localhost in  resource folder URLShortener application.
-  application.properties
+##############Create network in Docker##############
+**************Run the command**************
+Create docker network springapp
 
-7- Go to ConfigServerApplication folder and Run command mvn clean install
-8- Go to target folder run command javajava -jar ConfigServerApplication-0.0.1-SNAPSHOT.jar
+##############Run docker mysql image in network created above##############
+docker container run --name mysqldb -p 3306:3306 --network springapp -e MYSQL_ROOT_PASSWORD=root123 -e MYSQL_DATABASE=urlshortner -e MYSQL_USER=root  -d mysql:8
 
-9- Go to EurekaServer folder and Run command mvn clean install
-10- Go to target folder run command javajava -jar EurekaServer-0.0.1-SNAPSHOT.jar
+##############Start ELK on Docker##############
+Browse to ELK folder 
+**************Run the command**************
+docker-compose -f docker-compose-ELK.yml up
 
-11- Go to ZuulGatewayService folder and Run command mvn clean install
-12- Go to target folder run command javajava -jar ZuulGatewayService-0.0.1-SNAPSHOT.jar'
+##############Start FileBeat on Host Machine(LINUX)##############
 
-13- Go to URLShortener folder and Run command mvn clean install
-14- Go to target folder run command java -jar URLShortener-0.0.1-SNAPSHOT.jar
+Install filebeat 
+
+**************Run the command to install FileBeat**************
+apt-get install apt-transport-https
+apt update
+apt install filebeat
+
+**************Copy FileBeat configurations**************
+Browse to FileBeat folder
+Copy filebeat.yml to /etc/filebeat 
+
+**************Start FileBeat Service**************
+filebeat -e -c /etc/filebeat/filebeat.yml
+
+##############Create Index in Kibana##############
+Open link http://hostmachineip:5601 in a browser.
+Click on Index Patterns
+Click on Create index
+Define Index Pattern as filebeat*
+In the next page, click on @timestamp
+
+##############Start Microservices in Docker##############
+Browse to Viafora folder open in terminal.
+**************Run the command**************
+export IP=(`hostname -I | awk '{print $1}'`)
+IP=$IP docker-compose -f docker-compose.yml up
+
+
 
 ## Usage
 

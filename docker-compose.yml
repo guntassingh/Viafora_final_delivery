@@ -1,9 +1,9 @@
 version: '2.1'
 services:
-  configserverapp:
-    image: configserverapp
+  config:
+    image: config
     environment:
-      - env_var_name=10.191.90.127
+      - env_var_name=${IP}
     build:
       context: ./ConfigServerApplication
       dockerfile: Dockerfile
@@ -14,14 +14,14 @@ services:
     volumes:
       - /data:/data
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://10.191.90.127:8888/actuator/health"]
+      test: ["CMD", "curl", "-f", "http://${IP}:8888/actuator/health"]
       interval: 30s
       timeout: 20s
       retries: 5
-  eurekaserver:
-    image: eurekaserver
+  eureka:
+    image: eureka
     environment:
-      - env_var_name=10.191.90.127
+      - env_var_name=${IP}
     build:
       context: ./EurekaServer
       dockerfile: Dockerfile
@@ -32,17 +32,17 @@ services:
     volumes:
       - /data:/data
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://10.191.90.127:8761/actuator/health"]
+      test: ["CMD", "curl", "-f", "http://${IP}:8761/actuator/health"]
       interval: 30s
       timeout: 20s
       retries: 5
     depends_on:
-      configserverapp:
+      config:
         condition: service_healthy
-  zuulgatewayservice:
-    image: zuulgatewayservice 
+  zuul:
+    image: zuul
     environment:
-      - env_var_name=10.191.90.127
+      - env_var_name=${IP}
     build:
       context: ./ZuulGatewayService
       dockerfile: Dockerfile
@@ -52,14 +52,35 @@ services:
       - springapp
     volumes:
       - /data:/data
+    links:
+      - eureka
     healthcheck:
-      test: ["CMD", "curl", "--insecure", "-f", "https://10.191.90.127:8443/actuator/health"]
+      test: ["CMD", "curl", "--insecure", "-f", "https://${IP}:8443/actuator/health"]
       interval: 30s
       timeout: 20s
       retries: 5
     depends_on:
-      eurekaserver:
+      eureka:
         condition: service_healthy
+  mysqldb:
+   image: mysql:8
+   ports:
+     - 3306:3306
+   environment:
+     MYSQL_USER: "root"
+     MYSQL_ROOT_PASSWORD: "root123"
+     MYSQL_DATABASE: "urlshortner"
+   networks:
+     - springapp
+   healthcheck:
+     test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+     interval: 30s
+     timeout: 20s
+     retries: 5
+    
+   depends_on:
+     zuul:
+       condition: service_healthy
   url:
     image: url
     build:
@@ -69,12 +90,14 @@ services:
       - springapp
     ports:
       - 9091:9091
-    links:
-      - eurekaserver
     volumes:
       - /data:/data
+    links:
+      - config
+      - eureka
+      - mysqldb
     depends_on:
-      zuulgatewayservice:
+      mysqldb:
         condition: service_healthy
 networks:
   springapp:
