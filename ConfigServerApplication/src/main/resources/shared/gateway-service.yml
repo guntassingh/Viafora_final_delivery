@@ -34,7 +34,11 @@ server:
   
 logging:
   level:
-    org.springframework: ERROR
-    com.rsystems: DEBUG
-  file: /data/zuul.log
+    org:
+      springframework:
+        cloud: 
+          netflix: trace
+    com:
+      rsystems: DEBUG
+  file: C:/logs/zuul.log
   
