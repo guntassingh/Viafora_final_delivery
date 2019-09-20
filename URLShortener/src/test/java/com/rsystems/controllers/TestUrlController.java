@@ -56,7 +56,7 @@ public class TestUrlController {
 
 	@Test
 	public void findAndRedirect() throws Exception {
-		Mockito.when(urlService.find("MmM3MT")).thenReturn(url);
+		Mockito.when(urlService.getCodeDetails("MmM3MT")).thenReturn(url);
 		Mockito.when(statisticService.mapFrom(new HashMap<String, String>(), url)).thenReturn(Statistic);
 		System.out.println("Long url " + url.getLongUrl());
 
@@ -71,19 +71,7 @@ public class TestUrlController {
 	}
 
 	
-//	@Test(expected =UrlNotFoundException.class)
-//	public void findAndRedirectFailure() throws Exception  {
-//		Mockito.when(urlService.find("MmM3MT")).thenReturn(url);
-//		Mockito.when(statisticService.mapFrom(new HashMap<String, String>(), url)).thenReturn(Statistic);
-//		System.out.println("Long url " + url.getLongUrl());
-//
-//		RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/MmM3MT1").accept(MediaType.APPLICATION_JSON);
-//
-//		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-//
-//	
-//
-//	}
+
 	
 	@Test
 	public void createShortURL() throws Exception {

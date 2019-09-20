@@ -5,14 +5,21 @@ import com.rsystems.dtos.LinkDTO;
 import com.rsystems.entities.Url;
 
 public interface UrlService {
+	
+	
 	/**
-	 * Fetch find
-	 * 
-	 * @param browser, deviceType, operatingSystem and createdAt for which Statistic
-	 *                 detail are fetched
-	 * @return Statistic
+	 * Get URL code details
+	 * @param urlCode
+	 * @return
 	 */
 	public Url find(String urlCode);
+	
+	/**
+	 * Get url code details if found
+	 * @param urlCode
+	 * @return
+	 */
+	public Url getCodeDetails(String urlCode);
 
 	/**
 	 * Create createShortURL

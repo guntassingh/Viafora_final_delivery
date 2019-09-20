@@ -51,6 +51,40 @@ public class TestUrlServiceImpl {
 		assertEquals(returnCacheValue.get().getCustomerId(), url.getCustomerId());
 
 	}
+	
+	
+	@Test
+	public void whenCodeExistsReturnsUrlFromCodeDetails() {
+		// Given
+		String existingCode = "3077yW";
+
+		Url existingUrl = new Url(existingCode, "http://www.docker.com", "12345");
+		Optional<Url> optional = Optional.of(existingUrl);
+		Mockito.when(repository.findById(existingCode)).thenReturn(optional);
+
+		// When
+		Url url = urlService.getCodeDetails(existingCode);
+
+		// Then
+		Assert.assertEquals(existingUrl, url);
+	}
+	
+	
+	 @Test(expected = UrlNotFoundException.class)
+	public void whenCodenotExistsReturnsNotFoundException() {
+		// Given
+		String existingCode = "3077yW";
+
+		Url existingUrl = new Url(existingCode, "http://www.docker.com", "12345");
+		Optional<Url> optional = Optional.of(existingUrl);
+		Mockito.when(repository.findById(existingCode)).thenReturn(optional);
+
+		// When
+		Url url = urlService.getCodeDetails("3077yW1");
+
+		// Then
+		Assert.assertEquals(existingUrl, url);
+	}
 
 	@Test
 	public void createShortURLTest() {
@@ -65,6 +99,7 @@ public class TestUrlServiceImpl {
 		assertNotNull(url);
 
 	}
+	
 	
 	@Test
 	public void whenCodeExistsReturnsUrl() {
@@ -139,22 +174,7 @@ public class TestUrlServiceImpl {
 		
 	  }
 	  
-//	  @Test(expected = UrlNotFoundException.class)
-//	    public void testGetExistingUrlNotFound_failure() {		String existingCode = "NDRmNz";
-//		Date d = new Date();
-//		Url existingUrl = new Url(existingCode, "http://www.docker.com", "12345");
-//		  CreateLinkDTO createLinkDTO=new CreateLinkDTO();
-//		  createLinkDTO.setCustomerId("12345");
-//		  createLinkDTO.setUrl("http://www.docker.com");
-//		Optional<Url> optional = Optional.of(existingUrl);
-//		existingUrl.setCreatedAt(new Date());
-//		Mockito.when(repository.findById(existingCode)).thenReturn(optional);
-//		Mockito.when(urlService.fromDTO(createLinkDTO)).thenReturn(existingUrl);
-//		Mockito.when(repository.save(existingUrl)).thenReturn(existingUrl);
-//		urlService.createShortURL(createLinkDTO);
-//		
-//	  }
-	  
+
 	  @Test(expected = Exception.class)
 	    public void testGetExistingUrl_failure2() throws NoSuchAlgorithmException {
 		  

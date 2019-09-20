@@ -12,6 +12,7 @@ import com.rsystems.dtos.CreateLinkDTO;
 import com.rsystems.dtos.LinkDTO;
 import com.rsystems.entities.Url;
 import com.rsystems.exceptions.UrlFoundException;
+import com.rsystems.exceptions.UrlNotFoundException;
 import com.rsystems.helpers.UrlShortnerHelper;
 import com.rsystems.repositories.UrlRepository;
 import com.rsystems.utils.Constants;
@@ -24,8 +25,7 @@ public class UrlServiceImpl implements UrlService {
 	@Autowired
 	private UrlRepository repository;
 
-	@Value("URL_EXIST")
-	String urlexist;
+
 
 	@Override
 	public Url find(String urlCode) {
@@ -38,6 +38,14 @@ public class UrlServiceImpl implements UrlService {
 		return null;
 	}
 
+	@Override
+	public Url getCodeDetails(String urlCode) {
+		Url url= find(urlCode);
+		if(url==null) {
+			throw new UrlNotFoundException(Constants.URL_NOT_FOUND);
+		}
+		 return url;
+	}
 	/**
 	 * 
 	 * @param urlDto
@@ -55,7 +63,7 @@ public class UrlServiceImpl implements UrlService {
 		String code = UrlShortnerHelper.generateShortURL(longUrl, startIndex, endIndex);
 		Url recievedUrl = find(code);
 		if (recievedUrl != null) {
-			throw new UrlFoundException(urlexist);
+			throw new UrlFoundException(Constants.URL_FOUND);
 		}
 		url.setCode(code);
 		url = repository.save(url);

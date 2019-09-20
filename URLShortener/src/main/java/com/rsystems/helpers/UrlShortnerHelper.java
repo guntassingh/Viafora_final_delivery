@@ -11,7 +11,10 @@ import com.rsystems.utils.Constants;
 
 public class UrlShortnerHelper {
 
-	
+	private UrlShortnerHelper()
+	{
+		
+	}
 	private static final int RADIX = 16;
 	private static final int HASH_LENGTH = 32;
 	private static final String MD5_ALGORITHM = "MD5";

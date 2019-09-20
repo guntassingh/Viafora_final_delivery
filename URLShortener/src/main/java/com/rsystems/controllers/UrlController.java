@@ -66,10 +66,8 @@ public class UrlController {
 
 		logger.info(Constants.FINDING_URL_FOR_REDIRECTING, code);
 
-		Url url = urlService.find(code);
-		if (url == null) {
-			throw new UrlNotFoundException("URL not found");
-		}
+		Url url = urlService.getCodeDetails(code);
+		
 
 		Statistic statistic = statisticService.mapFrom(headersMap, url);
 		statisticService.create(statistic);
