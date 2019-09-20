@@ -20,9 +20,8 @@ import com.rsystems.dtos.CreateLinkDTO;
 import com.rsystems.dtos.LinkDTO;
 import com.rsystems.entities.Url;
 import com.rsystems.exceptions.UrlFoundException;
-import com.rsystems.exceptions.UrlShortnerHelperException;
+import com.rsystems.exceptions.UrlNotFoundException;
 import com.rsystems.repositories.UrlRepository;
-import com.rsystems.services.UrlServiceImpl;
 
 import junit.framework.Assert;
 
@@ -122,7 +121,9 @@ public class TestUrlServiceImpl {
 	 }
 	
 	  @Test(expected = UrlFoundException.class)
-	    public void testGetExistingUrl_failure() {		String existingCode = "NDRmNz";
+	    public void testGetExistingUrl_failure() {		
+		  
+		  String existingCode = "NDRmNz";
 		Date d = new Date();
 		Url existingUrl = new Url(existingCode, "http://www.docker.com", "12345");
 		  CreateLinkDTO createLinkDTO=new CreateLinkDTO();
@@ -131,11 +132,28 @@ public class TestUrlServiceImpl {
 		Optional<Url> optional = Optional.of(existingUrl);
 		existingUrl.setCreatedAt(new Date());
 		Mockito.when(repository.findById(existingCode)).thenReturn(optional);
+		//Mockito.when(urlService.find(existingCode)).thenReturn(existingUrl);
 		Mockito.when(urlService.fromDTO(createLinkDTO)).thenReturn(existingUrl);
 		Mockito.when(repository.save(existingUrl)).thenReturn(existingUrl);
 		urlService.createShortURL(createLinkDTO);
 		
 	  }
+	  
+//	  @Test(expected = UrlNotFoundException.class)
+//	    public void testGetExistingUrlNotFound_failure() {		String existingCode = "NDRmNz";
+//		Date d = new Date();
+//		Url existingUrl = new Url(existingCode, "http://www.docker.com", "12345");
+//		  CreateLinkDTO createLinkDTO=new CreateLinkDTO();
+//		  createLinkDTO.setCustomerId("12345");
+//		  createLinkDTO.setUrl("http://www.docker.com");
+//		Optional<Url> optional = Optional.of(existingUrl);
+//		existingUrl.setCreatedAt(new Date());
+//		Mockito.when(repository.findById(existingCode)).thenReturn(optional);
+//		Mockito.when(urlService.fromDTO(createLinkDTO)).thenReturn(existingUrl);
+//		Mockito.when(repository.save(existingUrl)).thenReturn(existingUrl);
+//		urlService.createShortURL(createLinkDTO);
+//		
+//	  }
 	  
 	  @Test(expected = Exception.class)
 	    public void testGetExistingUrl_failure2() throws NoSuchAlgorithmException {

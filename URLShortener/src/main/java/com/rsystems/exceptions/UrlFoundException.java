@@ -8,8 +8,5 @@ public class UrlFoundException extends RuntimeException {
 		super(message);
 	}
 	
-	public UrlFoundException(String message, Throwable cause) {
-		super(message, cause);
-	}
-	
+
 }

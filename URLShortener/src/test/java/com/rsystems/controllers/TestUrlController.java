@@ -28,6 +28,7 @@ import com.rsystems.dtos.CreateLinkDTO;
 import com.rsystems.dtos.LinkDTO;
 import com.rsystems.entities.Statistic;
 import com.rsystems.entities.Url;
+import com.rsystems.exceptions.UrlNotFoundException;
 import com.rsystems.services.StatisticService;
 import com.rsystems.services.ThirdPartyService;
 import com.rsystems.services.UrlService;
@@ -51,7 +52,7 @@ public class TestUrlController {
 
 	Url url = new Url("MmM3MT", "http://docker.com", "12345");
 	Statistic Statistic = new Statistic("crome", "computer", "window 10", url);
-	String urlJson ="{ \"customerId\": \"12345\", \"url\" : \"http://yahoo.com\"}";
+	String urlJson = "{ \"customerId\": \"12345\", \"url\" : \"http://yahoo.com\"}";
 
 	@Test
 	public void findAndRedirect() throws Exception {
@@ -64,43 +65,40 @@ public class TestUrlController {
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
 		System.out.println(result.getResponse());
-	//	String expected = "{'code':'MmM3MT','longUrl:http://docker.com','customerId:12345'}";
 
-		// {"id":"Course1","name":"Spring","description":"10 Steps, 25 Examples and 10K
-		// Students","steps":["Learn Maven","Import Project","First Example","Second
-		// Example"]}
-
-	//	JSONAssert.assertEquals(expected, result.getResponse().getContentAsString(), false);
 		assertEquals(HttpStatus.MOVED_PERMANENTLY.value(), result.getResponse().getStatus());
-
-		
-
-	}
-
-	@Test
-	public void createShortURL() throws Exception {
-		CreateLinkDTO urlDto = new CreateLinkDTO();
-		urlDto.setCustomerId("12345");
-		urlDto.setUrl("http://yahoo.com");
-		LinkDTO linkDTO = new LinkDTO();
-
-		// studentService.addCourse to respond back with mockCourse
-		Mockito.when(urlService.createShortURL(urlDto)).thenReturn(linkDTO);
-
-		// Send course as body to /students/Student1/courses
-		RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/s/url")
-				.accept(MediaType.APPLICATION_JSON).content(urlJson).header("token","").contentType(MediaType.APPLICATION_JSON);
-
-		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-
-		MockHttpServletResponse response = result.getResponse();
-
-		assertEquals(HttpStatus.OK.value(), response.getStatus());
-
-		//assertEquals("http://localhost:9091/s/url", response.getHeader(HttpHeaders.LOCATION));
 
 	}
 
 	
+//	@Test(expected =UrlNotFoundException.class)
+//	public void findAndRedirectFailure() throws Exception  {
+//		Mockito.when(urlService.find("MmM3MT")).thenReturn(url);
+//		Mockito.when(statisticService.mapFrom(new HashMap<String, String>(), url)).thenReturn(Statistic);
+//		System.out.println("Long url " + url.getLongUrl());
+//
+//		RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/MmM3MT1").accept(MediaType.APPLICATION_JSON);
+//
+//		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+//
+//	
+//
+//	}
+	
+	@Test
+	public void createShortURL() throws Exception {
+		CreateLinkDTO urlDto = new CreateLinkDTO();
+		urlDto.setCustomerId("validUser");
+		urlDto.setUrl("http://yahoo.com");
+		LinkDTO linkDTO = new LinkDTO();
+
+		Mockito.when(urlService.createShortURL(urlDto)).thenReturn(linkDTO);
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/s/url").accept(MediaType.APPLICATION_JSON)
+				.content(urlJson).header("token", "").contentType(MediaType.APPLICATION_JSON);
+		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+		MockHttpServletResponse response = result.getResponse();
+		assertEquals(HttpStatus.OK.value(), response.getStatus());
+
+	}
 
 }

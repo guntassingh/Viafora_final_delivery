@@ -27,20 +27,9 @@ public class ResourceExceptionHandler {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
 	}
 	
-	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ResponseEntity<ValidationError> validation(MethodArgumentNotValidException e, HttpServletRequest httpServletRequest) {
-		ValidationError validation = new ValidationError(HttpStatus.BAD_REQUEST.value(), e.getMessage(),
-				System.currentTimeMillis());
-		
-		for (FieldError error : e.getBindingResult().getFieldErrors()) {
-			validation.addError(error.getField(), error.getDefaultMessage());
-		}
-		
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(validation);
-	}
 	
 	@ExceptionHandler(UnAuthorizedException.class)
-	public ResponseEntity<StandardError> urlFound(UnAuthorizedException e, HttpServletRequest httpServletRequest) {
+	public ResponseEntity<StandardError> unAuthorizedException(UnAuthorizedException e, HttpServletRequest httpServletRequest) {
 		StandardError error = new StandardError(HttpStatus.UNAUTHORIZED.value(), e.getMessage(),
 				System.currentTimeMillis());
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);

@@ -29,7 +29,7 @@ public class TestThirdPartyServiceImpl {
 		 }
 	  @Test
 	    public void validateTokenTest1() {		
-		String userToken="1234";
+		String userToken="validUser";
 		boolean c = thirdPartyServiceImpl.validateToken(userToken);
 		assertTrue(c);
 		 }

@@ -40,8 +40,6 @@ public class LinkDTO implements Serializable {
 		this.url = url;
 	}
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
+
 
 }

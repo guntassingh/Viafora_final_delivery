@@ -51,7 +51,7 @@ public class UrlServiceImpl implements UrlService {
 		int startIndex = 0;
 		int endIndex = startIndex + Constants.URL_CODE_SIZE - 1;
 		longUrl = longUrl.replaceAll(Constants.PATTERN_BREAKING_CHARACTERS, "_").concat(urlDto.getCustomerId());
-		logger.info(Constants.RECURSIVE_INSERT, longUrl);
+		logger.info(Constants.URL_INSERT, longUrl);
 		String code = UrlShortnerHelper.generateShortURL(longUrl, startIndex, endIndex);
 		Url recievedUrl = find(code);
 		if (recievedUrl != null) {
