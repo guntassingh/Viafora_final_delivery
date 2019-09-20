@@ -15,16 +15,15 @@ spring:
   application:
     name: url-shortener
   jpa:
-    hibernate:
-      dll-auto: update
     show-sql: true
+    hibernate:
+      ddl-auto: update
     properties:
-      hibernate:
-        jdbc:
-          time_zone: UTC
-        format_sql: true
-      hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
-      show-sql: true
+        hibernate:
+            dialect: org.hibernate.dialect.MySQL5Dialect
+            jdbc:
+              time_zone: UTC
+            format_sql: true
   cloud:
     config:
       uri: http://10.191.90.127:8888
